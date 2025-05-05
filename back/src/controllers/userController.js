@@ -45,16 +45,7 @@ const userController = {
   // Inscription d'un nouvel utilisateur
   register: async (req, res) => {
     try {
-      const {
-        username,
-        email,
-        password,
-        first_name,
-        last_name,
-        age,
-        height,
-        weight,
-      } = req.body;
+      const { username, email, password, first_name, last_name } = req.body;
 
       // Vérifier si l'utilisateur existe déjà
       const userExists = await db.query(
@@ -71,19 +62,10 @@ const userController = {
 
       // Créer l'utilisateur
       const result = await db.query(
-        `INSERT INTO users (username, email, password, first_name, last_name, age, height, weight)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `INSERT INTO users (username, email, password, first_name, last_name)
+         VALUES ($1, $2, $3, $4, $5)
          RETURNING id, username, email, first_name, last_name`,
-        [
-          username,
-          email,
-          hashedPassword,
-          first_name,
-          last_name,
-          age,
-          height,
-          weight,
-        ]
+        [username, email, hashedPassword, first_name, last_name]
       );
 
       // Générer les tokens
@@ -100,6 +82,40 @@ const userController = {
       });
     } catch (error) {
       console.error("Erreur lors de l'inscription:", error);
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  },
+
+  // Création du profil utilisateur
+  createProfile: async (req, res) => {
+    try {
+      const { age, height, weight } = req.body;
+      const userId = req.user.id;
+
+      // Vérifier si l'utilisateur existe
+      const userExists = await db.query("SELECT * FROM users WHERE id = $1", [
+        userId,
+      ]);
+
+      if (userExists.rows.length === 0) {
+        return res.status(404).json({ message: "Utilisateur non trouvé" });
+      }
+
+      // Mettre à jour le profil de l'utilisateur
+      const result = await db.query(
+        `UPDATE users 
+         SET age = $1, height = $2, weight = $3, updated_at = CURRENT_TIMESTAMP
+         WHERE id = $4
+         RETURNING id, username, email, first_name, last_name, age, height, weight`,
+        [age, height, weight, userId]
+      );
+
+      res.status(200).json({
+        message: "Profil créé avec succès",
+        user: result.rows[0],
+      });
+    } catch (error) {
+      console.error("Erreur lors de la création du profil:", error);
       res.status(500).json({ message: "Erreur serveur" });
     }
   },

@@ -46,6 +46,7 @@ FitTracker est une application web responsive permettant de suivre ses performan
 - Historique des objectifs
 - Paramètres du compte
 - Préférences de notification
+- Afficher IMC quand l'utilisateur crée son profil
 
 ### 5. Gestion des Objectifs (`/goals`)
 

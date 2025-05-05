@@ -3,12 +3,49 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsDoc = require("swagger-jsdoc");
 
 const userRoutes = require("./routes/userRoutes");
 const goalRoutes = require("./routes/goalRoutes");
 const exerciseRoutes = require("./routes/exerciseRoutes");
 const workoutRoutes = require("./routes/workoutRoutes");
 const statsRoutes = require("./routes/statsRoutes");
+
+// Configuration Swagger
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "API FitTracker",
+      version: "1.0.0",
+      description: "Documentation de l'API FitTracker",
+    },
+    servers: [
+      {
+        url: `http://localhost:${process.env.PORT || 3000}`,
+        description: "Serveur de développement",
+      },
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+  },
+  apis: ["./src/routes/*.js"], // Chemin vers les fichiers contenant les annotations
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 const app = express();
 
@@ -22,6 +59,9 @@ app.use(
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
+
+// Route Swagger
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // Configuration des cookies
 app.use((req, res, next) => {
