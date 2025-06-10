@@ -5,6 +5,8 @@ import { App } from "./App";
 import "./index.css";
 import RegisterPage from "./pages/auth/register/register-page";
 import { LoginPage } from "./pages/auth/login/login-page";
+import DashboardPage from "./pages/dashboard/dashboard-page"
+
 
 const router = createBrowserRouter([
   {
@@ -19,6 +21,11 @@ const router = createBrowserRouter([
     path: "/login",
     element: <LoginPage />,
   },
+  {
+    path: "/dashboard",
+    element: <DashboardPage />,
+  },
+
 ]);
 
 const root = document.getElementById("root");
