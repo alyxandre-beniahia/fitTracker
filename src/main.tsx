@@ -6,6 +6,9 @@ import "./index.css";
 import RegisterPage from "./pages/auth/register/register-page";
 import { LoginPage } from "./pages/auth/login/login-page";
 import DashboardPage from "./pages/dashboard/dashboard-page"
+import AddProgress from "./pages/dashboard/addProgress"; 
+import PageCompte from "./pages/dashboard/monCompte";
+
 
 
 const router = createBrowserRouter([
@@ -25,7 +28,14 @@ const router = createBrowserRouter([
     path: "/dashboard",
     element: <DashboardPage />,
   },
-
+  {
+    path: "/dashboard/add-progress",
+    element: <AddProgress />,
+  },
+  { 
+    path: "/dashboard/monCompte",
+    element: <PageCompte />,
+  },
 ]);
 
 const root = document.getElementById("root");
